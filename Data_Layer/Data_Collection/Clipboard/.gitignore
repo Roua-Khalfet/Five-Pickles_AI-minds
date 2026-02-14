@@ -1,0 +1,26 @@
+# Virtual Environment (managed at root level)
+# venv/ is in root .gitignore
+
+# Clipboard data (captured content)
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local

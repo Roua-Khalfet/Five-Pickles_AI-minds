@@ -1,0 +1,30 @@
+# Virtual Environment (managed at root level)
+# venv/ is in root .gitignore
+
+# Calendar data (captured events)
+data/
+
+# Google Calendar credentials (SENSITIVE!)
+credentials.json
+token.pickle
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local

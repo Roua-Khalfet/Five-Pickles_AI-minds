@@ -13,10 +13,15 @@ __pycache__/
 *$py.class
 *.so
 
-# Extracted data
-*.json
+# Extracted data (but keep metadata.json and event files)
+Data_Layer/Data_Collection/Clipboard/data/
+Data_Layer/Data_Collection/Calendar/data/
 *.csv
 temp_*
+
+# Calendar credentials (SENSITIVE!)
+Data_Layer/Data_Collection/Calendar/credentials.json
+Data_Layer/Data_Collection/Calendar/token.pickle
 
 # IDE
 .vscode/
