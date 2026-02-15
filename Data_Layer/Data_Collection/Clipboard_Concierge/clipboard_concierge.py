@@ -110,6 +110,37 @@ class ClipboardConcierge:
         # A full implementation would read the actual content
         return None
 
+    def _format_action(self, action: str) -> str:
+        """Format action with emoji and friendly label.
+
+        Args:
+            action: Action name
+
+        Returns:
+            Formatted action string with emoji
+        """
+        action_labels = {
+            'create_calendar_event': 'Add to Calendar',
+            'set_reminder': 'Set Reminder',
+            'create_reminder': 'Create Reminder',
+            'add_to_todo_list': 'Add to Todo',
+            'search_stackoverflow': 'Search Stack Overflow',
+            'search_google': 'Google Search',
+            'search_github': 'Search GitHub',
+            'search_wikipedia': 'Search Wikipedia',
+            'search_image': 'Search Images',
+            'save_contact': 'Save Contact',
+            'send_email': 'Send Email',
+            'call_phone': 'Call Phone',
+            'open_file': 'Open File',
+            'show_in_folder': 'Show in Folder',
+            'open_file_location': 'Show in Folder',
+            'open_in_browser': 'Open in Browser',
+            'extract_text': 'Extract Text (OCR)',
+        }
+
+        return action_labels.get(action, action)
+
     def process_clipboard_entry(self, entry: Dict) -> None:
         """Process a single clipboard entry.
 
@@ -120,9 +151,10 @@ class ClipboardConcierge:
         content_type = entry.get('content_type', 'text')
         content_preview = entry.get('content_preview', '')
 
-        print(f"\n[ClipboardConcierge] Processing clipboard entry...")
-        print(f"  -> Type: {content_type}")
-        print(f"  -> Content: {content_preview[:60]}...")
+        # Display content preview
+        print(f"\n{'='*60}")
+        print(f">>> {content_preview[:70]}")
+        print(f"{'='*60}")
 
         # Classify the intent
         classification = self.classifier.classify(content_preview, content_type)
@@ -130,31 +162,30 @@ class ClipboardConcierge:
         intent = classification.get('intent')
         confidence = classification.get('confidence')
 
-        print(f"  -> Intent: {intent} (confidence: {confidence:.2f})")
-
         if intent == 'none':
-            print(f"  -> No action suggested")
+            print(f">>> No clear intent detected (confidence: {confidence:.2f})")
             return
-
-        # Show reasoning
-        reasoning = classification.get('reasoning', '')
-        if reasoning:
-            print(f"  -> Reasoning: {reasoning}")
 
         # Show suggested actions
         actions = classification.get('suggested_actions', [])
         if actions:
-            print(f"  -> Suggested actions:")
-            for i, action in enumerate(actions, 1):
-                print(f"     {i}. {action}")
+            print(f">>> Agent suggests: ", end='')
+
+            # Format actions
+            formatted_actions = [f"[ {self._format_action(a)} ]" for a in actions]
+            print(' '.join(formatted_actions))
 
             # Auto-execute if enabled
             if self.auto_execute and actions:
                 best_action = actions[0]
                 extracted_data = classification.get('extracted_data', {})
 
-                print(f"\n[ClipboardConcierge] Auto-executing: {best_action}")
-                self.executor.execute_action(best_action, extracted_data, content_preview)
+                print(f"\n>>> Auto-executing: {self._format_action(best_action)}")
+                success = self.executor.execute_action(best_action, extracted_data, content_preview)
+                if success:
+                    print(f">>> Action completed!")
+                else:
+                    print(f">>> Action failed")
 
         # Save the suggestion
         self._save_suggestion(entry, classification)
